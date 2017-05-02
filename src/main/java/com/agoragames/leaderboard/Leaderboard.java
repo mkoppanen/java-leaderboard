@@ -401,12 +401,12 @@ public class Leaderboard {
 			currentPage = totalPagesIn(leaderboardName, pageSize);
 		}
 
-		int indexForRedis = currentPage - 1;
-		int startingOffset = indexForRedis * pageSize;
+		long indexForRedis = currentPage - 1;
+		long startingOffset = indexForRedis * pageSize;
 		if (startingOffset < 0) {
 			startingOffset = 0;
 		}
-		int endingOffset = (startingOffset + pageSize) - 1;
+		long endingOffset = (startingOffset + pageSize) - 1;
 
 		Set<Tuple> rawLeaderData = _jedis.zrevrangeWithScores(leaderboardName, startingOffset, endingOffset);
 		return massageLeaderData(leaderboardName, rawLeaderData, useZeroIndexForRank);
@@ -444,11 +444,11 @@ public class Leaderboard {
 			pageSize = DEFAULT_PAGE_SIZE;
 		}
 
-		int startingOffset = reverseRankForMember.intValue() - (pageSize / 2);
+		long startingOffset = reverseRankForMember.intValue() - (pageSize / 2);
 		if (startingOffset < 0) {
 			startingOffset = 0;
 		}
-		int endingOffset = (startingOffset + pageSize) - 1;
+		long endingOffset = (startingOffset + pageSize) - 1;
 
 		Set<Tuple> rawLeaderData = _jedis.zrevrangeWithScores(leaderboardName, startingOffset, endingOffset);
 		return massageLeaderData(leaderboardName, rawLeaderData, useZeroIndexForRank);
