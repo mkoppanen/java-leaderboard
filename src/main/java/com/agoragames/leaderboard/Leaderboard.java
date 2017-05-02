@@ -357,7 +357,7 @@ public class Leaderboard {
 	 * @param useZeroIndexForRank Use zero-based index for rank
 	 * @return Score and rank for a member in the current leaderboard
 	 */
-	public Hashtable<String, Object> scoreAndRankFor(String member, boolean useZeroIndexForRank) {
+	public LeaderData scoreAndRankFor(String member, boolean useZeroIndexForRank) {
 		return scoreAndRankForIn(_leaderboardName, member, useZeroIndexForRank);
 	}
 
@@ -369,21 +369,22 @@ public class Leaderboard {
 	 * @param useZeroIndexForRank Use zero-based index for rank
 	 * @return Score and rank for a member in the named leaderboard
 	 */
-	public Hashtable<String, Object> scoreAndRankForIn(String leaderboardName, String member, boolean useZeroIndexForRank) {
+	public LeaderData scoreAndRankForIn(String leaderboardName, String member, boolean useZeroIndexForRank) {
 		try (Jedis jedis = _jedisPool.getResource()) {
-			Hashtable<String, Object> data = new Hashtable<String, Object>();
+			LeaderData data = new LeaderData(member, 0, 0);
 
 			Transaction transaction = jedis.multi();
 			transaction.zscore(leaderboardName, member);
 			transaction.zrevrank(leaderboardName, member);
 			List<Object> response = transaction.exec();
 
-			data.put("member", member);
-			data.put("score", response.get(0));
+			data.setMember(member);
+			data.setScore((Double) response.get(0));
+
 			if (useZeroIndexForRank) {
-				data.put("rank", response.get(1));
+				data.setRank((Long) response.get(1));
 			} else {
-				data.put("rank", (Long) response.get(1) + 1);
+				data.setRank((Long) response.get(1) + 1);
 			}
 
 			return data;

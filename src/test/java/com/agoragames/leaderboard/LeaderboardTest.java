@@ -125,11 +125,11 @@ public class LeaderboardTest extends TestCase {
 	public void testScoreAndRankFor() {
 		rankMembersInLeaderboard(5);
 
-		Hashtable<String, Object> data = _leaderboard.scoreAndRankFor("member_1", false);
+		LeaderData data = _leaderboard.scoreAndRankFor("member_1", false);
 
-		assertEquals("member_1", data.get("member"));
-		assertEquals(1.0, data.get("score"));
-		assertEquals(5, ((Long) data.get("rank")).longValue());
+		assertEquals("member_1", data.getMember());
+		assertEquals(1.0, data.getScore());
+		assertEquals(5, data.getRank());
 	}
 
 	public void testLeadersIn() {
